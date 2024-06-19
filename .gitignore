@@ -1,0 +1,21 @@
+# 2024 data
+inputs/birdclef-2024/train_audio/
+inputs/birdclef-2024/unlabeled_soundscapes/
+inputs/birdclef-2024/eBird_Taxonomy_v2021.csv
+inputs/birdclef-2024/sample_submission.csv
+inputs/birdclef-2024/train_metadata.csv
+inputs/birdclef2024-additional-cleaned/
+inputs/birdclef2024-additional-mp3/
+inputs/pretrain/
+inputs/birdclef2024-cleaned/
+
+wandb/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
