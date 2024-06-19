@@ -1,0 +1,70 @@
+[project]
+name = "birdclef2024-4th-place-solution-melspec"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "yokuyama", email = "you@example.com" }
+]
+dependencies = [
+    "torch==2.2.2+cu121",
+    "torchvision==0.17.2+cu121",
+    "torchaudio==2.2.2+cu121",
+    "lightning>=2.2.2",
+    "ipykernel>=6.29.4",
+    "colorednoise>=2.2.0",
+    "audiomentations>=0.35.0",
+    "librosa>=0.10.1",
+    "pandas>=2.2.2",
+    "pysoundfile>=0.9.0.post1",
+    "timm @ git+https://github.com/huggingface/pytorch-image-models.git@cb0e4391beedcc5ac3ae4bce16561b95c326f32c",
+    "torch-audiomentations>=0.11.1",
+    "ffmpeg>=1.4",
+    "soundfile>=0.12.1",
+    "audioread>=3.0.1",
+    "fastparquet>=2024.2.0",
+    "pyarrow>=16.0.0",
+    "nnaudio>=0.3.3",
+    "kaggle==1.6.4",
+    "torch-optimizer>=0.3.0",
+    "seaborn>=0.13.2",
+    "plotly>=5.22.0",
+    "nbformat>=5.10.4",
+    "transformers>=4.40.2",
+    "openvino==2024.1.0",
+    "torchshow>=0.5.1",
+    "nncf>=2.10.0",
+    "onnxruntime-gpu>=1.18.0",
+    "onnx>=1.16.1",
+    "openvino-dev>=2024.1.0",
+    "wandb>=0.17.1",
+]
+readme = "README.md"
+requires-python = ">= 3.10"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = []
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "src/birdclef2023_2nd_place_solution",
+    "configs",
+    "modules"
+]
+
+[[tool.rye.sources]]
+name = "torch"
+url = "https://download.pytorch.org/whl/cu121"
+type = "index"
+
+[[tool.rye.sources]]
+name = "onnxruntime-gpu"
+url = "https://aiinfra.pkgs.visualstudio.com/PublicPackages/_packaging/onnxruntime-cuda-12/pypi/simple/"
+type = "index"

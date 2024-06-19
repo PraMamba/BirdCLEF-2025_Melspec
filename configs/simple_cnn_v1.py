@@ -1,0 +1,138 @@
+import copy
+from configs.common import common_cfg
+from modules.augmentations import (
+    CustomCompose,
+    CustomOneOf,
+    NoiseInjection,
+    GaussianNoise,
+    PinkNoise,
+    AddGaussianNoise,
+    AddGaussianSNR,
+    GaussianNoiseSNR,
+    PinkNoiseSNR,
+)
+from audiomentations import Compose as amCompose
+from audiomentations import OneOf as amOneOf
+from audiomentations import AddBackgroundNoise, Gain, GainTransition, TimeStretch, Shift, Normalize
+import numpy as np
+
+cfg = copy.deepcopy(common_cfg)
+
+cfg.model_type = "simple_cnn"
+cfg.model_name = "inception_next_nano"
+cfg.pretrained = False
+cfg.secondary_label = 0.9
+cfg.secondary_label_weight = 0.5
+cfg.use_2024_additional_cleaned = True
+cfg.class_exponent_weight = -0.4
+cfg.test_size = 0.1
+
+cfg.batch_size = 96
+cfg.PRECISION = "bf16"
+cfg.seed = {
+    "pretrain_ce": 2,
+    "pretrain_bce": 77,
+    "train_ce": 3,
+    "train_bce": 6612,
+    "finetune": 2132,
+    "split": 11
+}
+cfg.DURATION_TRAIN = 5
+cfg.DURATION_FINETUNE = 30
+cfg.freeze = False
+
+cfg.mixup = True
+cfg.mixup_prob = 0.3
+
+cfg.mixup_double = 1.0
+cfg.mixup2_prob = 1.0
+cfg.mix_beta = 5
+cfg.mix_beta2 = 1
+cfg.in_chans = 1
+cfg.epochs = {
+    #"pretrain_ce": 70,
+    "pretrain_bce": 50,
+    "train_ce": 25,
+    "train_bce": 50,
+    #"finetune": 10,
+}
+cfg.lr = {
+    #"pretrain_ce": 3e-4,
+    "pretrain_bce": 1e-3,
+    "train_ce": 4e-5,
+    "train_bce": 1e-3,
+    #"finetune": 6e-4,
+}
+cfg.scheduler = "linear"
+
+cfg.model_ckpt = {
+    #"pretrain_ce": None,
+    "pretrain_bce": None,
+    "train_ce": None,
+    "train_bce": "outputs/simple_cnn_v1/pytorch/pretrain_bce/last.ckpt",
+    #"finetune": "outputs/cnn_v1/pytorch/train_bce/last.ckpt",
+}
+
+cfg.output_path = {
+    #"pretrain_ce": "outputs/cnn_v1/pytorch/pretrain_ce",
+    "pretrain_bce": "outputs/simple_cnn_v1/pytorch/pretrain_bce",
+    "train_ce": "outputs/simple_cnn_v1/pytorch/train_ce",
+    "train_bce": "outputs/simple_cnn_v1/pytorch/train_bce",
+    "finetune": "outputs/simple_cnn_v1/pytorch/finetune",
+    "quantization": "outputs/simple_cnn_v1/openvino/quantization",
+}
+
+cfg.final_model_path = "outputs/simple_cnn_v1/pytorch/train_bce/last-v15.ckpt"
+cfg.onnx_path = "outputs/simple_cnn_v1/onnx"
+cfg.openvino_path = "outputs/simple_cnn_v1/openvino"
+
+cfg.loss = {
+    #"pretrain_ce": "ce",
+    "pretrain_bce": "bce",
+    "train_ce": "ce",
+    "train_bce": "bce",
+    #"finetune": "bce",
+}
+
+cfg.img_size = 256
+cfg.n_mels = 128
+cfg.n_fft = 2048
+cfg.f_min = 0
+cfg.f_max = 16000
+
+cfg.valid_part = int(cfg.valid_duration / cfg.infer_duration)
+cfg.hop_length = cfg.infer_duration * cfg.SR // (cfg.img_size - 1)
+
+cfg.normal = 255
+
+cfg.am_audio_transforms = amCompose([
+    AddBackgroundNoise(cfg.birdclef2021_nocall + cfg.birdclef2020_nocall + cfg.freefield + cfg.warblrb + cfg.birdvox + cfg.rainforest + cfg.environment,
+        min_snr_in_db=3.0,max_snr_in_db=40.0,p=0.5),
+    Gain(min_gain_in_db=-20, max_gain_in_db=15, p=1),
+])
+
+
+cfg.np_audio_transforms = CustomCompose([
+  CustomOneOf([
+    NoiseInjection(p=0.5, max_noise_level=0.04),
+    GaussianNoiseSNR(p=0.5),
+    PinkNoiseSNR(p=0.5)
+  ]),
+])
+
+cfg.input_shape = (120,cfg.in_chans,cfg.n_mels,cfg.img_size)
+cfg.input_names = [ "x" ]
+cfg.output_names = [ "y" ]
+cfg.opset_version = 17
+
+# quantization config
+cfg.quant_batch_size = 32
+cfg.quant_subset_size = 900
+cfg.quant_fast_bias_correction = True
+cfg.quant_ignore_layer_names = [
+        '/backbone/stem/stem.0/Conv', '/backbone/stem/stem.0/Conv/WithoutBiases',
+        "/head/classifier/classifier.1/Conv", "/head/classifier/classifier.1/Conv/WithoutBiases",
+        "/head/MatMul_1", "/head/value/MatMul", "/head/key/MatMul", "/head/Div", '/head/key/Add', '/head/Softmax']
+cfg.quant_ovn_model_path = 'outputs/simple_cnn_v1/openvino/simple_cnn_v1.xml'
+
+basic_cfg = cfg
