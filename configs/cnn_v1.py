@@ -19,7 +19,7 @@ import numpy as np
 cfg = copy.deepcopy(common_cfg)
 
 cfg.model_type = "cnn"
-cfg.model_name = "rexnet_150"
+cfg.model_name = "efficientnet_b0"
 
 cfg.secondary_label = 0.9
 cfg.secondary_label_weight = 0.5
