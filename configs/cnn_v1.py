@@ -35,8 +35,8 @@ cfg.seed = {
     "finetune": 20230523,
     "split": 0
 }
-cfg.DURATION_TRAIN = 5
-cfg.DURATION_FINETUNE = 5
+cfg.DURATION_TRAIN = 20
+cfg.DURATION_FINETUNE = 30
 cfg.freeze = False
 cfg.mixup = False
 cfg.mixup2 = True
