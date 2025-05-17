@@ -38,11 +38,6 @@ def preprocess(cfg, stage):
     df['secondary_labels'] = df['secondary_labels'].apply(lambda x: literal_eval(x))
     df["path"] = cfg.train_dir + "/" + df["filename"]
 
-    # drop duplicates
-    # df_dup = get_duplicated_files()
-    # df = df[~df["filename"].isin(df_dup["file2"])]
-
-
     # ensure all the train data is available
     if not df['path'].apply(lambda x:os.path.exists(x)).all():
         print('===========================================================')
@@ -56,9 +51,9 @@ def preprocess(cfg, stage):
     class_sample_count = {col:0 for col in cfg.bird_cols}
     include_in_train = []
     presence_type = []
-    for i,(primary_label, secondary_labels) in enumerate(zip(df[cfg.primary_label_col].values,df[cfg.secondary_labels_col].values)):
+    for i,(primary_label, secondary_labels) in enumerate(zip(df[cfg.primary_label_col].values, df[cfg.secondary_labels_col].values)):
         include = False
-        presence = 'background' if primary_label!='soundscape' else 'soundscape'
+        presence = 'background' if primary_label != 'soundscape' else 'soundscape'
         if primary_label in cfg.bird_cols:
             include = True
             presence = 'foreground'

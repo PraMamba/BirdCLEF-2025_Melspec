@@ -19,14 +19,14 @@ import numpy as np
 cfg = copy.deepcopy(common_cfg)
 
 cfg.model_type = "cnn"
-cfg.model_name = "seresnext26ts"
+cfg.model_name = "rexnet_150"
 
 cfg.secondary_label = 0.9
 cfg.secondary_label_weight = 0.5
 
 
-cfg.batch_size = 96
-cfg.PRECISION = 16
+cfg.batch_size = 64
+cfg.PRECISION = "bf16"
 cfg.seed = {
     "pretrain_ce": 20231121,
     "pretrain_bce": 20230503,
@@ -50,7 +50,7 @@ cfg.epochs = {
     #"pretrain_ce": 70,
     "pretrain_bce": 12,
     "train_ce": 50,
-    "train_bce": 20,
+    "train_bce": 100,
     #"finetune": 10,
 }
 cfg.lr = {
@@ -71,17 +71,17 @@ cfg.model_ckpt = {
 }
 
 cfg.output_path = {
-    #"pretrain_ce": "outputs/cnn_v1/pytorch/pretrain_ce",
-    "pretrain_bce": "outputs/cnn_v1/pytorch/pretrain_bce",
-    "train_ce": "outputs/cnn_v1/pytorch/train_ce",
-    "train_bce": "outputs/cnn_v1/pytorch/train_bce",
-    "finetune": "outputs/cnn_v1/pytorch/finetune",
-    "quantization": "outputs/cnn_v1/openvino/quantization",
+    #"pretrain_ce": "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v1/pytorch/pretrain_ce",
+    "pretrain_bce": "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v1/pytorch/pretrain_bce",
+    "train_ce": "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v1/pytorch/train_ce",
+    "train_bce": "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v3/pytorch/train_bce",
+    "finetune": "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v1/pytorch/finetune",
+    "quantization": "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v1/openvino/quantization",
 }
 
-cfg.final_model_path = "outputs/cnn_v1/pytorch/train_bce/last-v10.ckpt"
-cfg.onnx_path = "outputs/cnn_v1/onnx"
-cfg.openvino_path = "outputs/cnn_v1/openvino"
+cfg.final_model_path = "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v3/pytorch/train_bce/epoch=93_step=33652_val_roc_auc=0.968_val_cmap_pad=0.846_val_ap=0.848.ckpt"
+cfg.onnx_path = "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v3/onnx"
+cfg.openvino_path = "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v3/openvino"
 
 cfg.loss = {
     #"pretrain_ce": "ce",
@@ -103,9 +103,8 @@ cfg.hop_length = cfg.infer_duration * cfg.SR // (cfg.img_size - 1)
 cfg.normal = 255
 
 cfg.am_audio_transforms = amCompose([
-    AddBackgroundNoise(cfg.birdclef2021_nocall + cfg.birdclef2020_nocall + cfg.freefield + cfg.warblrb + cfg.birdvox + cfg.rainforest + cfg.environment, min_snr_in_db=3.0,max_snr_in_db=30.0,p=0.5),
-    Gain(min_gain_in_db=-12, max_gain_in_db=12, p=0.2),
-
+    AddBackgroundNoise(cfg.birdclef2021_nocall + cfg.birdclef2020_nocall + cfg.freefield + cfg.warblrb + cfg.birdvox + cfg.rainforest + cfg.environment, min_snr_db=3.0, max_snr_db=30.0, p=0.5),
+    Gain(min_gain_db=-12, max_gain_db=12, p=0.2),
 ])
 
 
@@ -127,6 +126,6 @@ cfg.quant_batch_size = 32
 cfg.quant_subset_size = 600
 cfg.quant_fast_bias_correction = False
 cfg.quant_ignore_layer_names = ['/head/Gemm/WithoutBiases', '/global_pool/Pow', '/global_pool/GlobalAveragePool', '/global_pool/Pow_1', '/global_pool/Clip']
-cfg.quant_ovn_model_path = 'outputs/cnn_v1/openvino/cnn_v1.xml'
+cfg.quant_ovn_model_path = '/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v1/openvino/cnn_v1.xml'
 
 basic_cfg = cfg

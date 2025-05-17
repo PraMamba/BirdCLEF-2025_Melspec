@@ -544,7 +544,7 @@ class BirdClefModelBase(pl.LightningModule):
                     prog_bar=True,
                 )
                 self.log(
-                    "validation ROCAUC score",
+                    "val_roc_auc",
                     avg_score,
                     on_step=False,
                     on_epoch=True,
@@ -552,7 +552,7 @@ class BirdClefModelBase(pl.LightningModule):
                     prog_bar=True,
                 )
                 self.log(
-                    "validation C-MAP score pad e",
+                    "val_cmap_pad",
                     avg_score2,
                     on_step=False,
                     on_epoch=True,
@@ -560,7 +560,7 @@ class BirdClefModelBase(pl.LightningModule):
                     prog_bar=True,
                 )
                 self.log(
-                    "validation AP score",
+                    "val_ap",
                     avg_score3,
                     on_step=False,
                     on_epoch=True,
@@ -575,14 +575,10 @@ class BirdClefModelBase(pl.LightningModule):
                     logger=True,
                     prog_bar=True,
                 )
-                #         competition_metrics(output_val,target_val)
+
                 print(f"epoch {self.current_epoch} validation loss {avg_loss}")
-                print(
-                    f"epoch {self.current_epoch} validation ROCAUC score {avg_score}"
-                )
-                print(
-                    f"epoch {self.current_epoch} validation C-MAP score pad 3 {avg_score2}"
-                )
+                print(f"epoch {self.current_epoch} validation ROCAUC score {avg_score}")
+                print(f"epoch {self.current_epoch} validation C-MAP score pad 3 {avg_score2}")
                 print(f"epoch {self.current_epoch} validation AP score {avg_score3}")
             else:
                 self.log(
@@ -1050,14 +1046,14 @@ class ReshapeInferModel(ReshapeModel):
         return logits
 
 
-def load_model(cfg,stage,train=True):
+def load_model(cfg,stage, train=True):
     if train:
         model_ckpt = cfg.model_ckpt[stage]
     else:
         model_ckpt = cfg.final_model_path
 
     if model_ckpt is not None:
-        state_dict = torch.load(model_ckpt,map_location=cfg.DEVICE)['state_dict']
+        state_dict = torch.load(model_ckpt, map_location=cfg.DEVICE)['state_dict']
         print('loading model from checkpoint')
     else:
         state_dict = None
