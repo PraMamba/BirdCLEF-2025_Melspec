@@ -5,6 +5,10 @@ from torch.utils.data import Dataset, DataLoader, RandomSampler
 from modules.utils import crop_or_pad
 import torchaudio as ta
 
+import pickle
+with open('/home/guangp/BirdCLEF-2025_Melspec/notebooks/train_voice_data.pkl', 'rb') as f:
+    VOICE_DATA = pickle.load(f)
+
 class BirdTrainDataset(Dataset):
 
     # 初始化方法，传入多个参数控制数据读取行为
@@ -54,6 +58,15 @@ class BirdTrainDataset(Dataset):
 
         # 最大偏移时间，确保随机裁剪不越界
         max_offset = np.max([0, duration - work_duration])
+        
+        
+        # ✅ 根据 .pkl 的路径字段进行人声片段过滤
+        full_path = row['path']
+        voice_segments = VOICE_DATA.get(full_path, [])
+        if isinstance(voice_segments, list) and len(voice_segments) > 0:
+            human_voice_duration = sum([max(0.0, seg['end'] - seg['start']) for seg in voice_segments])
+            if human_voice_duration > work_duration * 0.5:
+                return None, None  # 超过 50%，跳过此样本
 
         # 仅用于计算推理片段数量（推理用不到这里）
         parts = int(duration // self.cfg.infer_duration) if duration % self.cfg.infer_duration == 0 else int(duration // self.cfg.infer_duration + 1)
@@ -136,6 +149,10 @@ class BirdTrainDataset(Dataset):
 
         # 加载音频样本及其标签
         audio, target = self.load_data(row["path"], target, row)
+        
+        # ==== ✅ 新增：如果数据被过滤（返回 None），则选下一个样本 ====
+        if audio is None or target is None:
+            return self.__getitem__((idx + 1) % len(self.df))  # 尝试下一个样本，循环不越界
 
         # 转换标签为 float tensor
         target = torch.tensor(target).float()
