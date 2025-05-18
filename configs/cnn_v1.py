@@ -49,7 +49,7 @@ cfg.in_chans = 1
 cfg.epochs = {
     #"pretrain_ce": 70,
     "pretrain_bce": 12,
-    "train_ce": 50,
+    "train_ce": 32,
     "train_bce": 32,
     #"finetune": 10,
 }
@@ -73,15 +73,15 @@ cfg.model_ckpt = {
 cfg.output_path = {
     #"pretrain_ce": "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v1/pytorch/pretrain_ce",
     "pretrain_bce": "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v1/pytorch/pretrain_bce",
-    "train_ce": "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v1/pytorch/train_ce",
+    "train_ce": "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v7/pytorch/train_ce",
     "train_bce": "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v6/pytorch/train_bce",
     "finetune": "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v1/pytorch/finetune",
     "quantization": "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v1/openvino/quantization",
 }
 
-cfg.final_model_path = "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v6/pytorch/train_bce/epoch=31_step=11456_val_roc_auc=0.959_val_cmap_pad=0.804_val_ap=0.809.ckpt"
-cfg.onnx_path = "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v6/onnx"
-cfg.openvino_path = "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v6/openvino"
+cfg.final_model_path = "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v7/pytorch/train_ce/epoch=30_step=11098_val_roc_auc=0.905_val_cmap_pad=0.745_val_ap=0.798.ckpt"
+cfg.onnx_path = "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v7/onnx"
+cfg.openvino_path = "/data2/Mamba/Project/Kaggle/BirdCLEF-2025/cnn_v7/openvino"
 
 cfg.loss = {
     #"pretrain_ce": "ce",
